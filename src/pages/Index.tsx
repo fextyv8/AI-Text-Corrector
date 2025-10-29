@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Sparkles, Copy, Check } from "lucide-react";
+import { Loader2, Sparkles, Copy, Check, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [inputText, setInputText] = useState("");
@@ -13,6 +14,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleCorrect = async () => {
     if (!inputText.trim()) {
@@ -73,12 +75,38 @@ const Index = () => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
+  const handleDownload = () => {
+    // Descargar el archivo main.py
+    const link = document.createElement('a');
+    link.href = '/main.py';
+    link.download = 'main.py';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "¡Descargando!",
+      description: "El archivo main.py se está descargando.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/30 to-accent/30">
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Theme Toggle */}
-          <div className="flex justify-end">
+          {/* Theme Toggle and Download Button */}
+          <div className="flex justify-end items-center gap-3">
+            {isMobile && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleDownload}
+                className="rounded-full"
+              >
+                <Download className="h-5 w-5" />
+                <span className="sr-only">Descargar versión Python</span>
+              </Button>
+            )}
             <ThemeToggle />
           </div>
           
